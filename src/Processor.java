@@ -23,7 +23,7 @@ public class Processor extends Thread {
     }
 
     private void startServer() {
-//        Random port in range 30000-40000
+//      Random port in range 30000-40000
         port = randomNumber(30000,40000);
 //      Configure Processor connection
         ServerSocket serverSocket = null;

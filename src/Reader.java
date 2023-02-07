@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 
 public class Reader {
     static String serverHostname = "127.0.0.1";
+    private static final int N = 25;
     public static void main(String[] args) throws IOException {
 //      Set localhost address
         if (args.length > 0) {
@@ -32,24 +33,54 @@ public class Reader {
             System.err.println("Couldn't get I/O for the connection to: " + serverHostname);
             System.exit(1);
         }
-
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         String serverMessage;
+        String readerInput;
+        boolean exit = false;
 
         while ((serverMessage = in.readLine()) != null) {
-//      If response from main server is exit close connection
-            if (serverMessage.equals("exit")) {
+//          Read the menu from the Server
+            System.out.println(serverMessage);
+//          Read from keyboard and send the response to the Server
+            readerInput = stdIn.readLine();
+            out.println(readerInput);
+            switch (readerInput) {
+                case "1":
+//                  Read the list of available processors
+                    serverMessage = in.readLine();
+                    System.out.println(serverMessage);
+                    // Read from keyboard and send the response to the Server
+                    readerInput = stdIn.readLine();
+                    out.println(readerInput);
+//                  Get the port of the chosen processor
+                    String port = in.readLine();
+//                  Get the API message and send to the processor for N times
+                    for (int i = 0; i < N; i++) {
+                        serverMessage = in.readLine();
+                        String apiMessage = serverMessage;
+                        System.out.println(apiMessage);
+                        connectToProcessor(Integer.parseInt(port), apiMessage);
+                    }
+                    break;
+                case "2":
+                    //  Read the list of available processors
+                    serverMessage = in.readLine();
+                    System.out.println(serverMessage);
+                    // Read from keyboard and send the response to the Server
+                    readerInput = stdIn.readLine();
+                    out.println(readerInput);
+                    break;
+                case "3":
+                    exit = true;
+                    break;
+                default:
+                    System.out.println("Wrong input");
+                    continue;
+            }
+            if (exit) {
                 break;
             }
-//      Save Api message
-            String apiMessage = serverMessage;
-            System.out.println(apiMessage);
-//          Request to server to get the port from a available Processor
-            out.println("Connect me to a processor to calc the data");
-//          Save Processor port
-            String port = in.readLine();
-            connectToProcessor(Integer.parseInt(port), apiMessage);
         }
-
 //      Close connection
         out.close();
         in.close();
